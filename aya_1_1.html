@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.min.js"></script>
+
+<style>
+
+    path.link {
+        fill: none;
+        stroke: #666;
+        stroke-width: 1.5px;
+    }
+
+    path.link.twofive {
+        opacity: 0.25;
+    }
+
+    path.link.fivezero {
+        opacity: 0.50;
+    }
+
+    path.link.sevenfive {
+        opacity: 0.75;
+    }
+
+    path.link.onezerozero {
+        opacity: 1.0;
+    }
+
+    circle {
+        fill: #ccc;
+        stroke: #fff;
+        stroke-width: 1.5px;
+    }
+
+
+    text {
+        fill: #000;
+        font: 10px sans-serif;
+        pointer-events: none;
+    }
+
+</style>
+<button type="button" onclick="javascript:update(1)">Aya</button>
+<button type="button" onclick="javascript:update(2)">Omissions</button>
+<button type="button" onclick="javascript:update(3)">I'rab</button>
+<br>
+<body>
+<script>
+
+    update(1);
+
+    function update(i){
+
+        // remove the stuff so no duplicates
+        d3.select("body").selectAll("svg").remove();
+        var width = 750,
+                height = 750;
+
+        var svg = d3.select("body").append("svg")
+                .attr("width", width)
+                .attr("height", height);
+
+
+        // get the data: for different buttons could be different files
+        d3.json("aya_1_1.json", function(error, links) {
+
+            var nodes = {};
+            var  v = d3.scale.linear().range([0, 100]);
+
+// Compute the distinct nodes from the links.
+            links.forEach(function(link) {
+
+                link.value = +link.value;
+
+
+                link.source = nodes[link.source] ||
+                        (nodes[link.source] = {name: link.source});
+                link.target = nodes[link.target] ||
+                        (nodes[link.target] = {name: link.target});
+
+                // link.value = +link.value;
+            });
+
+
+            function myfilter(element)  {
+
+                //Add an if statement here to respond differently to different ranges of i
+                // nested way of adding the grammar
+
+                //if (v(element.value) < 0)
+                return  element.visible <= i;
+            }
+
+            var force = d3.layout.force()
+                    .nodes(d3.values(nodes))
+                    .links(links.filter(myfilter))
+                    .size([width , height ])
+                    .gravity(0.1)
+                    .linkDistance(90)
+                    .charge(-1500)
+                    .on("tick", tick)
+                    .start();
+
+// Set the range
+//var  v = d3.scale.linear().range([0, 100]);
+
+// Scale the range of the data
+            v.domain([0, d3.max(links, function(d) { return d.value; })]);
+
+// asign a type per value to encode opacity
+            links.forEach(function(link) {
+                if (v(link.value) <= 25) {
+                    link.type = "twofive";
+                } else if (v(link.value) <= 50 && v(link.value) > 25) {
+                    link.type = "fivezero";
+                } else if (v(link.value) <= 75 && v(link.value) > 50) {
+                    link.type = "sevenfive";
+                } else if (v(link.value) <= 100 && v(link.value) > 75) {
+                    link.type = "onezerozero";
+                }
+            });
+
+
+
+            var tip = d3.tip()
+                    .attr('class', 'd3-tip')
+                    .offset([-10, 0])
+                    .html(function(d) {
+                        return "<strong></strong> <span style='color:red'>" + d.annotation + "</span>";
+                    })
+
+            svg.call(tip);
+
+// build the arrow.
+            svg.append("svg:defs").selectAll("marker")
+                    .data(["end"])      // Different link/path types can be defined here
+                    .enter().append("svg:marker")    // This section adds in the arrows
+                    .attr("id", String)
+                    .attr("viewBox", "0 -5 10 10")
+                    .attr("refX", 15)
+                    .attr("refY", -1.5)
+                    .attr("markerWidth", 6)
+                    .attr("markerHeight", 6)
+                    .attr("orient", "auto")
+                    .attr("fill", "none")   //can't find the correct fill
+                    .attr("stroke", "magenta")  //not sure how to make the color same as the link
+                    .append("svg:path")
+                    .attr("d", "M0,-5L10,0L0,5")
+            ;
+
+
+// add the links and the arrows
+            var path = svg.append("svg:g").selectAll("path")
+                    .data(force.links())
+                    .enter().append("svg:path")
+                    .attr("class", function(d) { return "link " + d.type; })
+                    .style("stroke", function(d) {return d.colour})
+                    .on("mouseover", tip.show)
+                    .on("mouseout", tip.hide)
+                    .attr("marker-end", "url(#end)");
+
+
+// define the nodes
+            var node = svg.selectAll(".node")
+                    .data(force.nodes())
+                    .enter().append("g")
+                    .attr("class", "node")
+                    .on("click", click)
+                    .on("dblclick", dblclick)
+                    .call(force.drag);
+
+
+
+// add the nodes
+            node.append("circle")
+                    .attr("r", 5);
+
+// add the text
+            node.append("text")
+                    .attr("x", 17)
+                    .attr("dy", ".35em")
+                    .style("font", "15px sans-serif")
+                    .text(function(d) { return d.name; });
+
+
+            var r=30;
+// add the curvy lines + bounding box
+            function tick() {
+                path.attr("d", function(d) {
+                    // var dx = d.target.x - d.source.x,
+                    var dx = Math.max(r, Math.min(width - r, d.target.x)) - Math.max(r, Math.min(width - r, d.source.x)),
+                    //dy = d.target.y - d.source.y,
+                            dy = Math.max(r, Math.min(width - r, d.target.y)) - Math.max(r, Math.min(width - r, d.source.y)),
+                            dr = Math.sqrt(dx * dx + dy * dy);
+                    return "M" +
+                        //d.source.x + "," +
+                            Math.max(r, Math.min(width - r, d.source.x)) + "," +
+                        //d.source.y + "A" +
+                            Math.max(r, Math.min(width - r, d.source.y)) + "A" +
+                            dr + "," + dr + " 0 0,1 " +
+                        //d.target.x + "," +
+                            Math.max(r, Math.min(width - r, d.target.x)) + "," +
+                        // d.target.y;
+                            Math.max(r, Math.min(width - r, d.target.y));
+                });
+
+                node
+                        .attr("transform", function(d) {
+                            //return "translate(" + d.x + "," + d.y + ")"; });
+                            return "translate(" + Math.max(r, Math.min(width - r, d.x)) + "," + Math.max(r, Math.min(height - r, d.y)) + ")"; });
+            }
+
+// action to take on mouse click
+            function click() {
+                d3.select(this).select("text").transition()
+                        .duration(750)
+                        .attr("x", 22)
+                        .style("fill", "steelblue")
+                        .style("stroke", "lightsteelblue")
+                        .style("stroke-width", ".5px")
+                        .style("font", "40px sans-serif");
+                d3.select(this).select("circle").transition()
+                        .duration(750)
+                        .attr("r", 9)
+                        .style("fill", "lightsteelblue");
+            }
+
+// action to take on mouse double click
+            function dblclick() {
+                d3.select(this).select("circle").transition()
+                        .duration(750)
+                        .attr("r", 6)
+                        .style("fill", "#ccc");
+                d3.select(this).select("text").transition()
+                        .duration(750)
+                        .attr("x", 12)
+                        .style("stroke", "none")
+                        .style("fill", "black")
+                        .style("stroke", "none")
+                        .style("font", "15px sans-serif");
+            }
+
+        })
+    }
+
+</script>
+</body>
+</html>
