@@ -1,4 +1,4 @@
-When Moses was chasing after the source of the light in the desert night, the burning bush, he heard sounds that inescapably made him fall in love with someONE out of sight, a maddening feral love that robbed his mind of all speech except the articulation: ‘Let me look at You!’ [7:143] (when in the mountain). 
+When Moses was chasing after the source of the light in the desert night, the burning bush, he heard sounds that inescapably made him fall in love with someONE out of sight, a maddening feral love that robbed his mind of all speech except the articulation: ‘Let me look at You!’ 7:143 (when in the mountain). 
 
 وَلَمَّا جَاءَ مُوسَى لِمِيقَاتِنَا وَكَلَّمَهُ رَبُّهُ قَالَ رَبِّ أَرِنِي أَنْظُرْ إِلَيْكَ
 
