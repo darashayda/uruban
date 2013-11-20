@@ -1,0 +1,16 @@
+[
+ {"source":"إِيَّاكَ","target":" ضمير", "colour":"aqua","value":1.0,"annotation":"","visible":1},
+                 {"source":"إياه","target":" ضمير", "colour":"aqua","value":1.0,"annotation":"","visible":1},
+    {"source":"إياي","target":" ضمير", "colour":"aqua","value":1.0,"annotation":"","visible":1},
+    {"source":"إيانا","target":" ضمير", "colour":"aqua","value":1.0,"annotation":"","visible":1},
+    {"source":"إياكم","target":" ضمير", "colour":"aqua","value":1.0,"annotation":"","visible":1},
+    {"source":"إياهم","target":" ضمير", "colour":"aqua","value":1.0,"annotation":"","visible":1},
+ {"source":" إِيَّا","target":"مضاف إليه", "colour":"black","value":1.0,"annotation":"إيَّا وحدَه ضميرٌ وما بعده اسمٌ مضافٌ إليه يُبَيِّنُ ما يُراد به من تكلمٍ وغَيْبَةٍ وخطاب","visible":1},
+    {"source":" إِيَّا","target":"ضمير", "colour":"aqua","value":1.0,"annotation":"","visible":1},
+ {"source":"  إِيَّا","target":"بيان", "colour":"black","value":1.0,"annotation":"","visible":1},
+    {"source":"  إِيَّا","target":"  ضمير", "colour":"Aqua","value":1.0,"annotation":"","visible":1},
+
+ {"source":"   إِيَّا","target":"   ضمير", "colour":"black","value":1.0,"annotation":"","visible":1} ,
+    {"source":"   إِيَّا","target":"عماد", "colour":"aqua","value":1.0,"annotation":"","visible":1}
+
+]
